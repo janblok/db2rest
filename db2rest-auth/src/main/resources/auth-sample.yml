@@ -45,3 +45,9 @@ apiKeys:
   - key: apiKey3
     roles: [user]
     active: true
+
+roleDataFilters:
+  - role: role3
+    tableName: optionalTableName
+    columnName: tenant_id
+    filterValue: ==13
