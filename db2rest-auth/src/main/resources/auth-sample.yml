@@ -48,6 +48,6 @@ apiKeys:
 
 roleDataFilters:
   - role: role3
-    tableName: optionalTableName
+    tableName: tableName
     columnName: tenant_id
-    filterValue: ==13
+    value: 13
