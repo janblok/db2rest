@@ -31,7 +31,7 @@ public class DeleteController implements DeleteRestApi {
         db2RestConfigProperties.checkDeleteAllowed(filter);
 
         int rows = deleteService.delete(dbId, schemaName, tableName,
-                MultiTenancy.joinFilters(filter, tableName, roleBasedDataFilters));
+                MultiTenancy.joinFilters(filter, dbId, tableName, roleBasedDataFilters));
         log.debug("Number of rows deleted - {}", rows);
         return DeleteResponse.builder().rows(rows).build();
     }

@@ -60,6 +60,6 @@ public class FileAuthDataLookup implements AuthDataLookup {
 
     @Override
     public List<RoleDataFilter> getRoleDataFilters(String role) {
-        return authData.roleDataFilters().stream().filter(df -> role.equalsIgnoreCase(df.roleName())).toList();
+        return authData.roleDataFilters().stream().filter(df -> role.equalsIgnoreCase(df.role())).toList();
     }
 }

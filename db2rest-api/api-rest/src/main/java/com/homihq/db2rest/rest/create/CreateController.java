@@ -30,7 +30,7 @@ public class CreateController implements CreateRestApi {
             Map<String, Object> data,
             boolean tsIdEnabled) {
 
-        MultiTenancy.addTenantColumns(data, tableName, roleBasedDataFilters);
+        MultiTenancy.addTenantColumns(data, dbId, tableName, roleBasedDataFilters);
         return createService.save(dbId, schemaName, tableName, includeColumns, data, tsIdEnabled, sequences);
     }
 }

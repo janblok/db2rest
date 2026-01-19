@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+import static com.homihq.db2rest.config.MultiTenancy.ROLEBASEDDATAFILTERS;
 import static com.homihq.db2rest.rest.RdbmsRestApi.VERSION;
 
 @RestController
@@ -27,7 +28,7 @@ public class FindOneController {
 
     @GetMapping(VERSION + "/{dbId}/{tableName}/one")
     public Map<String, Object> findOne(
-            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = ROLEBASEDDATAFILTERS, required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Accept-Profile", required = false) String schemaName,
@@ -44,7 +45,7 @@ public class FindOneController {
                 .defaultFetchLimit(100) //todo update with config
                 .schemaName(schemaName)
                 .tableName(tableName)
-                .filter(MultiTenancy.joinFilters(filter, tableName, roleBasedDataFilters))
+                .filter(MultiTenancy.joinFilters(filter, dbId, tableName, roleBasedDataFilters))
                 .fields(fields)
                 .build();
 

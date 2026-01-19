@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+import static com.homihq.db2rest.config.MultiTenancy.ROLEBASEDDATAFILTERS;
 import static com.homihq.db2rest.rest.RdbmsRestApi.VERSION;
 
 @RestController
@@ -28,7 +29,7 @@ public class UpdateController {
 
     @PatchMapping(VERSION + "/{dbId}/{tableName}")
     public UpdateResponse save(
-            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = ROLEBASEDDATAFILTERS, required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Content-Profile", required = false) String schemaName,
@@ -36,7 +37,7 @@ public class UpdateController {
             @RequestParam(name = "filter", required = false, defaultValue = "") String filter) {
 
         int rows = updateService.patch(dbId, schemaName, tableName, data,
-                MultiTenancy.joinFilters(filter, tableName, roleBasedDataFilters));
+                MultiTenancy.joinFilters(filter, dbId, tableName, roleBasedDataFilters));
         return new UpdateResponse(rows);
     }
 }

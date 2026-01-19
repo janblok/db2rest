@@ -10,13 +10,15 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MultiTenancy {
-    public static String joinFilters(String filter, String tableName, List<RoleDataFilter> roleBasedDataFilters) {
+    public static final String ROLEBASEDDATAFILTERS = "roleBasedDataFilters";
+
+    public static String joinFilters(String filter, String dbId, String table, List<RoleDataFilter> roleBasedDataFilters) {
         StringBuilder filterBuilder = new StringBuilder(filter);
         if (roleBasedDataFilters != null) {
             for (RoleDataFilter roleDataFilter : roleBasedDataFilters) {
-                if (tableName.equalsIgnoreCase(roleDataFilter.tableName())) {
+                if (dbId.equalsIgnoreCase(roleDataFilter.dbId()) && table.equalsIgnoreCase(roleDataFilter.table())) {
                     if (!filterBuilder.isEmpty()) filterBuilder.append(";");
-                    filterBuilder.append(roleDataFilter.columnName());
+                    filterBuilder.append(roleDataFilter.column());
                     filterBuilder.append("==");
                     filterBuilder.append(roleDataFilter.value());
                 }
@@ -25,17 +27,17 @@ public class MultiTenancy {
         return filterBuilder.toString();
     }
 
-    public static void addTenantColumns(List<Map<String, Object>> data, String tableName, List<RoleDataFilter> roleBasedDataFilters) {
+    public static void addTenantColumns(List<Map<String, Object>> data, String dbId, String table, List<RoleDataFilter> roleBasedDataFilters) {
         for(Map<String, Object> dataItem : data) {
-            addTenantColumns(dataItem, tableName, roleBasedDataFilters);
+            addTenantColumns(dataItem, dbId, table, roleBasedDataFilters);
         }
     }
 
-    public static void addTenantColumns(Map<String, Object> data, String tableName, List<RoleDataFilter> roleBasedDataFilters) {
+    public static void addTenantColumns(Map<String, Object> data, String dbId, String table, List<RoleDataFilter> roleBasedDataFilters) {
         if (roleBasedDataFilters != null) {
             for (RoleDataFilter roleDataFilter : roleBasedDataFilters) {
-                if (tableName.equalsIgnoreCase(roleDataFilter.tableName())) {
-                    data.put(roleDataFilter.columnName(), roleDataFilter.value());
+                if (dbId.equalsIgnoreCase(roleDataFilter.dbId()) && table.equalsIgnoreCase(roleDataFilter.table())) {
+                    data.put(roleDataFilter.column(), roleDataFilter.value());
                 }
             }
         }

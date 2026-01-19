@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import static com.homihq.db2rest.config.MultiTenancy.ROLEBASEDDATAFILTERS;
 import static com.homihq.db2rest.rest.RdbmsRestApi.VERSION;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface DeleteRestApi {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(VERSION + "/{dbId}/{tableName}")
     DeleteResponse delete(
-            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = ROLEBASEDDATAFILTERS, required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @RequestHeader(name = "Content-Profile", required = false) String schemaName,
             @PathVariable String tableName,

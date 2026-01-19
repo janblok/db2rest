@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.homihq.db2rest.config.MultiTenancy.ROLEBASEDDATAFILTERS;
 import static com.homihq.db2rest.rest.RdbmsRestApi.VERSION;
 
 @RestController
@@ -31,7 +32,7 @@ public class ReadController {
 
     @GetMapping(value = VERSION + "/{dbId}/{tableName}", produces = "application/json")
     public Object findAll(
-            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = ROLEBASEDDATAFILTERS, required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Accept-Profile", required = false) String schemaName,
@@ -48,7 +49,7 @@ public class ReadController {
                 .schemaName(schemaName)
                 .tableName(tableName)
                 .fields(fields)
-                .filter(MultiTenancy.joinFilters(filter, tableName, roleBasedDataFilters))
+                .filter(MultiTenancy.joinFilters(filter, dbId, tableName, roleBasedDataFilters))
                 .sorts(sorts)
                 .limit(limit)
                 .defaultFetchLimit(db2RestConfigProperties.getDefaultFetchLimit())
@@ -61,7 +62,7 @@ public class ReadController {
 
     @PostMapping(value = VERSION + "/{dbId}/{tableName}/_expand", produces = "application/json")
     public Object find(
-            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = ROLEBASEDDATAFILTERS, required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Accept-Profile", required = false) String schemaName,
@@ -77,7 +78,7 @@ public class ReadController {
                 .schemaName(schemaName)
                 .tableName(tableName)
                 .fields(fields)
-                .filter(MultiTenancy.joinFilters(filter, tableName, roleBasedDataFilters))
+                .filter(MultiTenancy.joinFilters(filter, dbId, tableName, roleBasedDataFilters))
                 .sorts(sorts)
                 .limit(limit)
                 .defaultFetchLimit(db2RestConfigProperties.getDefaultFetchLimit())

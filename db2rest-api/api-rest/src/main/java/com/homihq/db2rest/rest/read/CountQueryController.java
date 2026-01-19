@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.homihq.db2rest.config.MultiTenancy.ROLEBASEDDATAFILTERS;
 import static com.homihq.db2rest.rest.RdbmsRestApi.VERSION;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class CountQueryController {
 
     @GetMapping(VERSION + "/{dbId}/{tableName}/count")
     public CountResponse count(
-            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = ROLEBASEDDATAFILTERS, required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Accept-Profile", required = false) String schemaName,
@@ -40,7 +41,7 @@ public class CountQueryController {
                 .dbId(dbId)
                 .schemaName(schemaName)
                 .tableName(tableName)
-                .filter(MultiTenancy.joinFilters(filter, tableName, roleBasedDataFilters))
+                .filter(MultiTenancy.joinFilters(filter, dbId, tableName, roleBasedDataFilters))
                 .build();
 
         return countQueryService.count(readContext);

@@ -123,7 +123,7 @@ public class JdbcBulkCreateService implements BulkCreateService, FileStreamObser
             log.warn("No data to process.");
             return;
         }
-        MultiTenancy.addTenantColumns(data, context.tableName(), context.roleDataFilters());
+        MultiTenancy.addTenantColumns(data, context.dbId(), context.tableName(), context.roleDataFilters());
         try {
             CreateBulkResponse response = saveBulk(context, data);
 

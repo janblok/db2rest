@@ -48,6 +48,7 @@ apiKeys:
 
 roleDataFilters:
   - role: role3
-    tableName: tableName
-    columnName: tenant_id
+    dbId: pgdatabase
+    table: tableName
+    column: tenant_id
     value: 13

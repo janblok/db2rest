@@ -16,13 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static com.homihq.db2rest.config.MultiTenancy.ROLEBASEDDATAFILTERS;
 import static com.homihq.db2rest.rest.RdbmsRestApi.VERSION;
 
 public interface BulkCreateRestApi {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = VERSION + "/{dbId}/{tableName}/bulk", consumes = {"application/json", "text/csv"})
     CreateBulkResponse save(
-            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = ROLEBASEDDATAFILTERS, required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Content-Profile", required = false) String schemaName,
@@ -35,7 +36,7 @@ public interface BulkCreateRestApi {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = VERSION + "/{dbId}/{tableName}/upload", consumes = {"multipart/form-data", "application/json"})
     CompletableFuture<CreateResponse> saveMultipartFile(
-            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = ROLEBASEDDATAFILTERS, required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Content-Profile", required = false) String schemaName,

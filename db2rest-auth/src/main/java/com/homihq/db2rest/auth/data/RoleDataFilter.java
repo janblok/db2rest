@@ -1,4 +1,4 @@
 package com.homihq.db2rest.auth.data;
 
-public record RoleDataFilter(String roleName, String tableName, String columnName, Object value) {
+public record RoleDataFilter(String role, String dbId, String table, String column, Object value) {
 }

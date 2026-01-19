@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.homihq.db2rest.config.MultiTenancy.ROLEBASEDDATAFILTERS;
 import static com.homihq.db2rest.rest.RdbmsRestApi.VERSION;
 
 @Slf4j
@@ -30,7 +31,7 @@ public class ExistsQueryController {
 
     @GetMapping(value = VERSION + "/{dbId}/{tableName}/exists", produces = "application/json")
     public ExistsResponse exists(
-            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = ROLEBASEDDATAFILTERS, required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Accept-Profile", required = false) String schemaName,
@@ -43,7 +44,7 @@ public class ExistsQueryController {
                 .dbId(dbId)
                 .schemaName(schemaName)
                 .tableName(tableName)
-                .filter(MultiTenancy.joinFilters(filter, tableName, roleBasedDataFilters))
+                .filter(MultiTenancy.joinFilters(filter, dbId, tableName, roleBasedDataFilters))
                 .build();
 
         return existsQueryService.exists(readContext);
@@ -51,7 +52,7 @@ public class ExistsQueryController {
 
 	@PostMapping(value = VERSION + "/{dbId}/{tableName}/exists/_expand", produces = "application/json")
 	public ExistsResponse exists(
-            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = ROLEBASEDDATAFILTERS, required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name="Accept-Profile", required = false) String schemaName,
@@ -64,7 +65,7 @@ public class ExistsQueryController {
                 .schemaName(schemaName)
                 .tableName(tableName)
                 .fields("*")
-                .filter(MultiTenancy.joinFilters(filter, tableName, roleBasedDataFilters))
+                .filter(MultiTenancy.joinFilters(filter, dbId, tableName, roleBasedDataFilters))
                 .joins(joins)
                 .build();
 
