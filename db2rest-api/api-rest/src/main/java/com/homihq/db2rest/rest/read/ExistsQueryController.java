@@ -30,7 +30,7 @@ public class ExistsQueryController {
 
     @GetMapping(value = VERSION + "/{dbId}/{tableName}/exists", produces = "application/json")
     public ExistsResponse exists(
-            @RequestAttribute("roleBasedDataFilters") List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Accept-Profile", required = false) String schemaName,
@@ -50,12 +50,13 @@ public class ExistsQueryController {
     }
 
 	@PostMapping(value = VERSION + "/{dbId}/{tableName}/exists/_expand", produces = "application/json")
-	public ExistsResponse exists(@RequestAttribute("roleBasedDataFilters") List<RoleDataFilter> roleBasedDataFilters,
-                                 @PathVariable String dbId,
-								 @PathVariable String tableName,
-								 @RequestHeader(name="Accept-Profile", required = false) String schemaName,
-	                             @RequestParam(name = "filter", required = false, defaultValue = "") String filter,
-	                             @RequestBody List<JoinDetail> joins
+	public ExistsResponse exists(
+            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
+            @PathVariable String dbId,
+            @PathVariable String tableName,
+            @RequestHeader(name="Accept-Profile", required = false) String schemaName,
+            @RequestParam(name = "filter", required = false, defaultValue = "") String filter,
+            @RequestBody List<JoinDetail> joins
 	) {
 
         ReadContext readContext = ReadContext.builder()

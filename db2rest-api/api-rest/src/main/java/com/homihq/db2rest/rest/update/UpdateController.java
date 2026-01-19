@@ -28,7 +28,7 @@ public class UpdateController {
 
     @PatchMapping(VERSION + "/{dbId}/{tableName}")
     public UpdateResponse save(
-            @RequestAttribute("roleBasedDataFilters") List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Content-Profile", required = false) String schemaName,

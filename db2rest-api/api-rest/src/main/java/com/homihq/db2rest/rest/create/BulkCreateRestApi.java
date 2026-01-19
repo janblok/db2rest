@@ -22,7 +22,7 @@ public interface BulkCreateRestApi {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = VERSION + "/{dbId}/{tableName}/bulk", consumes = {"application/json", "text/csv"})
     CreateBulkResponse save(
-            @RequestAttribute("roleBasedDataFilters") List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Content-Profile", required = false) String schemaName,
@@ -35,7 +35,7 @@ public interface BulkCreateRestApi {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = VERSION + "/{dbId}/{tableName}/upload", consumes = {"multipart/form-data", "application/json"})
     CompletableFuture<CreateResponse> saveMultipartFile(
-            @RequestAttribute("roleBasedDataFilters") List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Content-Profile", required = false) String schemaName,

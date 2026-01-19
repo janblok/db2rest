@@ -27,7 +27,7 @@ public class FindOneController {
 
     @GetMapping(VERSION + "/{dbId}/{tableName}/one")
     public Map<String, Object> findOne(
-            @RequestAttribute("roleBasedDataFilters") List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Accept-Profile", required = false) String schemaName,

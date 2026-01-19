@@ -31,7 +31,7 @@ public class ReadController {
 
     @GetMapping(value = VERSION + "/{dbId}/{tableName}", produces = "application/json")
     public Object findAll(
-            @RequestAttribute("roleBasedDataFilters") List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Accept-Profile", required = false) String schemaName,
@@ -61,7 +61,7 @@ public class ReadController {
 
     @PostMapping(value = VERSION + "/{dbId}/{tableName}/_expand", produces = "application/json")
     public Object find(
-            @RequestAttribute("roleBasedDataFilters") List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @PathVariable String tableName,
             @RequestHeader(name = "Accept-Profile", required = false) String schemaName,

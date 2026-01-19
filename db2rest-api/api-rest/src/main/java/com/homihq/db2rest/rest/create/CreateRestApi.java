@@ -20,7 +20,7 @@ public interface CreateRestApi {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(VERSION + "/{dbId}/{tableName}")
     CreateResponse save(
-            @RequestAttribute("roleBasedDataFilters") List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @RequestHeader(name = "Content-Profile", required = false) String schemaName,
             @PathVariable String tableName,

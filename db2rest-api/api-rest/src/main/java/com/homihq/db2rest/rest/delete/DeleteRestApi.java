@@ -18,7 +18,7 @@ public interface DeleteRestApi {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(VERSION + "/{dbId}/{tableName}")
     DeleteResponse delete(
-            @RequestAttribute("roleBasedDataFilters") List<RoleDataFilter> roleBasedDataFilters,
+            @RequestAttribute(name = "roleBasedDataFilters", required = false) List<RoleDataFilter> roleBasedDataFilters,
             @PathVariable String dbId,
             @RequestHeader(name = "Content-Profile", required = false) String schemaName,
             @PathVariable String tableName,
