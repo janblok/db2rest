@@ -52,6 +52,7 @@ public class JdbcBulkCreateService implements BulkCreateService, FileStreamObser
         if (Objects.isNull(dataList) || dataList.isEmpty()) {
             throw new GenericDataAccessException("No data provided");
         }
+        MultiTenancy.addTenantColumns(dataList, bulkContext.dbId(), bulkContext.tableName(), bulkContext.roleDataFilters());
 
         log.debug("** Bulk Insert **");
 
@@ -123,7 +124,7 @@ public class JdbcBulkCreateService implements BulkCreateService, FileStreamObser
             log.warn("No data to process.");
             return;
         }
-        MultiTenancy.addTenantColumns(data, context.dbId(), context.tableName(), context.roleDataFilters());
+
         try {
             CreateBulkResponse response = saveBulk(context, data);
 

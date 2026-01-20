@@ -31,6 +31,10 @@ public class BasicAuthProvider extends AbstractAuthProvider {
     @Override
     public UserDetail authenticate(HttpServletRequest request) {
         String authHeader = this.getAuthHeader(request);
+        if (authHeader == null || !authHeader.startsWith(BASIC_AUTH)) {
+            return null;
+        }
+
         String base64Credentials = authHeader.substring(String.format("%s ", BASIC_AUTH).length());
         byte[] decodedCredentials = Base64.getDecoder().decode(base64Credentials);
         String credentials = new String(decodedCredentials, StandardCharsets.UTF_8);

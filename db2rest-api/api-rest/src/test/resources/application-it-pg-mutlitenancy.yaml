@@ -1,0 +1,5 @@
+SQL_TEMPLATE_PATH: classpath:testdata/sql-pg
+ENABLE_AUTH: true
+AUTH_PROVIDER: basic
+AUTH_DATA_SOURCE: classpath:/auth-basic.yml
+

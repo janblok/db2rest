@@ -36,6 +36,7 @@ public class UpdateController {
             @RequestBody Map<String, Object> data,
             @RequestParam(name = "filter", required = false, defaultValue = "") String filter) {
 
+        MultiTenancy.addTenantColumns(data, dbId, tableName, roleBasedDataFilters);
         int rows = updateService.patch(dbId, schemaName, tableName, data,
                 MultiTenancy.joinFilters(filter, dbId, tableName, roleBasedDataFilters));
         return new UpdateResponse(rows);
