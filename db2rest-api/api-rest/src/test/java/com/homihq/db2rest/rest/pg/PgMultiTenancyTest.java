@@ -7,10 +7,10 @@ import static org.hamcrest.Matchers.not;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,14 +28,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.homihq.db2rest.PostgreSQLBaseIntegrationTest;
 import com.homihq.db2rest.auth.AuthFilter;
 
 import io.hosuaby.inject.resources.junit.jupiter.GivenTextResource;
 import io.hosuaby.inject.resources.junit.jupiter.TestWithResources;
-import io.hosuaby.inject.resources.junit.jupiter.WithJacksonMapper;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ActiveProfiles("it-pg-mutlitenancy")
@@ -60,7 +57,7 @@ public class PgMultiTenancyTest extends PostgreSQLBaseIntegrationTest {
 
     @Test
     @Order(1)
-    @DisplayName("Query all users for tenant_id.")
+    @DisplayName("Query all users for tenant_id")
     void findAllUsers() throws Exception {
         mockMvc.perform(get(VERSION + "/pgsqldb/users")
                         .contentType(APPLICATION_JSON).accept(APPLICATION_JSON)
@@ -76,7 +73,7 @@ public class PgMultiTenancyTest extends PostgreSQLBaseIntegrationTest {
 
     @Test
     @Order(2)
-    @DisplayName("Create a user expect tenant_id to be set.")
+    @DisplayName("Create users expect tenant_id to be set")
     void create() throws Exception {
         mockMvc.perform(post(VERSION + "/pgsqldb/users/bulk")
                         .contentType(APPLICATION_JSON).accept(APPLICATION_JSON)
@@ -92,7 +89,7 @@ public class PgMultiTenancyTest extends PostgreSQLBaseIntegrationTest {
 
     @Test
     @Order(3)
-    @DisplayName("Query all users for tenant_id.")
+    @DisplayName("Query all users for tenant_id")
     void countAllUsers() throws Exception {
         mockMvc.perform(get(VERSION + "/pgsqldb/users/count")
                         .contentType(APPLICATION_JSON).accept(APPLICATION_JSON)
@@ -130,10 +127,25 @@ public class PgMultiTenancyTest extends PostgreSQLBaseIntegrationTest {
                 .contentType(APPLICATION_JSON).accept(APPLICATION_JSON)
                 .header("Authorization", BASIC_AUTH_VALUE)
                 )
-                .andDo(print())
+//                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
                 .andExpect(jsonPath("$[0].tenant_id", not(equalTo(999))))
                 .andDo(document("pg-validate-tenant-is-ignored"));
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Delete all users for tenant_id")
+    void deleteAllUsersFromTenant() throws Exception {
+        mockMvc.perform(delete(VERSION + "/pgsqldb/users")
+                        .contentType(APPLICATION_JSON).accept(APPLICATION_JSON)
+                        .header("Authorization", BASIC_AUTH_VALUE)
+                )
+//                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(1)))
+                .andExpect(jsonPath("$.rows", equalTo(4)))
+                .andDo(document("pg-delete-all-users-from-tenant"));
     }
 }
