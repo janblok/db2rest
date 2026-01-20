@@ -11,6 +11,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,6 +35,7 @@ import com.homihq.db2rest.auth.AuthFilter;
 import io.hosuaby.inject.resources.junit.jupiter.GivenTextResource;
 import io.hosuaby.inject.resources.junit.jupiter.TestWithResources;
 
+@Order(200)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ActiveProfiles("it-pg-mutlitenancy")
 @TestWithResources
@@ -57,34 +59,35 @@ public class PgMultiTenancyTest extends PostgreSQLBaseIntegrationTest {
 
     @Test
     @Order(1)
-    @DisplayName("Query all users for tenant_id")
-    void findAllUsers() throws Exception {
-        mockMvc.perform(get(VERSION + "/pgsqldb/users")
-                        .contentType(APPLICATION_JSON).accept(APPLICATION_JSON)
-                        .header("Authorization", BASIC_AUTH_VALUE)
-                )
-//                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.*").isArray())
-                .andExpect(jsonPath("$.*", hasSize(2)))
-                .andExpect(jsonPath("$[0].*", hasSize(6)))
-                .andDo(document("pg-find-all-tenants"));
-    }
-
-    @Test
-    @Order(2)
-    @DisplayName("Create users expect tenant_id to be set")
+    @DisplayName("Create users expect tenant_id to be filled")
     void create() throws Exception {
         mockMvc.perform(post(VERSION + "/pgsqldb/users/bulk")
                         .contentType(APPLICATION_JSON).accept(APPLICATION_JSON)
                         .content(CREATE_USER_REQUEST)
                         .header("Authorization", BASIC_AUTH_VALUE)
                 )
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.rows").isArray())
                 .andExpect(jsonPath("$.rows", hasSize(2)))
                 .andDo(document("pg-create-a-user-with-tenant-id"));
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Query all users for tenant_id, validate tenant_id")
+    void findAllUsers() throws Exception {
+        mockMvc.perform(get(VERSION + "/pgsqldb/users")
+                        .contentType(APPLICATION_JSON).accept(APPLICATION_JSON)
+                        .header("Authorization", BASIC_AUTH_VALUE)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.*", hasSize(2)))
+                .andExpect(jsonPath("$[0].*", hasSize(6)))
+                .andExpect(jsonPath("$[0].tenant_id", equalTo(15)))
+                .andDo(document("pg-find-all-tenants"));
     }
 
     @Test
@@ -99,7 +102,7 @@ public class PgMultiTenancyTest extends PostgreSQLBaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*").isArray())
                 .andExpect(jsonPath("$.*", hasSize(1)))
-                .andExpect(jsonPath("$.count", equalTo(4)))
+                .andExpect(jsonPath("$.count", equalTo(2)))
                 .andDo(document("pg-count-all-users-from-tenant"));
     }
 
@@ -145,7 +148,7 @@ public class PgMultiTenancyTest extends PostgreSQLBaseIntegrationTest {
 //                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(1)))
-                .andExpect(jsonPath("$.rows", equalTo(4)))
+                .andExpect(jsonPath("$.rows", equalTo(2)))
                 .andDo(document("pg-delete-all-users-from-tenant"));
     }
 }
